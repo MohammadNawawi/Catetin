@@ -21,16 +21,16 @@ export default class AddListModal extends React.Component {
     };
 
     createTodo = () => {
-        const { name, color } = this.state
-        tempData.push({
-            name,
-            color,
-            todos:[]
-        })
-        if (this.state.name.trim().length < 1) {
-            alert('List name is Empty!')
-            return;
-        }
+        const { name, color } = this.state;
+        
+        const list = { name, color };
+
+        this.props.addList(list);
+
+        // if (this.state.name.trim().length < 1) {
+        //     alert('List name is Empty!')
+        //     return;
+        // }
         this.setState({ name: "" });
         this.props.closeModal();
     }

@@ -26,41 +26,53 @@ import AddListModal from './components/AddListModal'
 
 export default class App extends React.Component {
   state = {
-    addTodoVisible: false
+    addTodoVisible: false,
+    lists: tempData
   };
 
   toggleAddTodoModal() {
     this.setState({ addTodoVisible: !this.state.addTodoVisible });
-   }
-
-  renderList = list => {
-    return <TodoList list={list}/>
   }
 
+  renderList = list => {
+    return <TodoList list={list} updateList={this.updateList} />
+  }
+
+  addList = list => {
+    this.setState({ lists: [...this.state.lists, { ...list, id: this.state.lists.length + 1, todos: [] }] });
+  };
+
+  updateList = list => {
+    this.setState({
+      lists: this.state.lists.map(item => {
+        return item.id === list.id ? list : item
+      })
+    })
+  };
   render() {
     return (
       <View style={styles.container}>
         <Modal animationType="slide" visible={this.state.addTodoVisible} onRequestClose={() => this.toggleAddTodoModal()}>
-          <AddListModal closeModal={() => this.toggleAddTodoModal()}/>
+          <AddListModal closeModal={() => this.toggleAddTodoModal()} addList={this.addList} />
         </Modal>
-        <View style={{flexDirection:"row"}}>
+        <View style={{ flexDirection: "row" }}>
           <View style={styles.divider}></View>
           <Text style={styles.title}>
-            Catetin <Text style={{fontWeight:"300", color:colors.blue}}>Belanja!</Text>
+            Catetin <Text style={{ fontWeight: "300", color: colors.blue }}>Belanja!</Text>
           </Text>
           <View style={styles.divider}></View>
         </View>
-        <View style={{marginVertical:30}}>
+        <View style={{ marginVertical: 30 }}>
           <TouchableOpacity style={styles.addList} onPress={() => this.toggleAddTodoModal()}>
-            <Image source={require('./assets/icon/add.png')} style={{height:30,width:30}}/>
+            <Image source={require('./assets/icon/add.png')} style={{ height: 30, width: 30 }} />
           </TouchableOpacity>
           <Text style={styles.add}>Add List</Text>
         </View>
-        <View style={{height:275, paddingLeft:25}}>
-          <FlatList data={tempData} keyExtractor={item => item.name}
+        <View style={{ height: 275, paddingLeft: 25 }}>
+          <FlatList data={this.state.lists} keyExtractor={item => item.name}
             horizontal={true}
             showsHorizontalScrollIndicator={false}
-            renderItem={({ item }) => this.renderList(item)}/>
+            renderItem={({ item }) => this.renderList(item)} keyboardShouldPersistTaps="always" />
         </View>
       </View>
     );
@@ -78,7 +90,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.lightBlue,
     height: 1,
     flex: 1,
-    alignSelf:"center"
+    alignSelf: "center"
   },
   title: {
     fontSize: 38,
@@ -92,14 +104,14 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     padding: 16,
     alignItems: "center",
-    justifyContent:"center"
+    justifyContent: "center"
   },
   add: {
     color: colors.blue,
     fontWeight: "600",
     fontSize: 14,
-    marginTop:8,
-    alignSelf:"center"
+    marginTop: 8,
+    alignSelf: "center"
   }
 });
 
